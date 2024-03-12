@@ -168,40 +168,44 @@ def resource_version_create(context, data_dict):
     """
     start_time = datetime.now()
 
-    log.info("Starting resource_version_create. ({start_time})")
+    log.info(
+        f"Starting [resource_version_create] resource_version_create. {start_time}"
+    )
     model = context.get("model", core_model)
 
-    duration = datetime.now() - start_time
-    log.info(f"Finished context.get(model) in {duration}")
+    log.info(
+        f"Finished [resource_version_create] context.get(model) in {datetime.now() - start_time}"
+    )
 
     resource_id, name = toolkit.get_or_bust(data_dict, ["resource_id", "name"])
 
-    duration = datetime.now() - start_time
-    log.info(f"Finished toolkit.get_or_bust in {duration}")
+    log.info(
+        f"Finished [resource_version_create] toolkit.get_or_bust in {datetime.now() - start_time}"
+    )
 
     resource = model.Resource.get(resource_id)
 
-    duration = datetime.now() - start_time
     log.info(
-        f"Finished model.Resource.get(resource_id) for ({resource_id}) in {duration}"
+        f"Finished [resource_version_create] model.Resource.get(resource_id) for ({resource_id}) in {datetime.now() - start_time}"
     )
 
     if not resource:
-        duration = datetime.now() - start_time
-        log.info(f"Resource NOT FOUND! in {duration}")
+        log.info(
+            f"Resource NOT FOUND! [resource_version_create] in {datetime.now() - start_time}"
+        )
         raise toolkit.ObjectNotFound("Resource not found")
 
     toolkit.check_access("version_create", context, {"package_id": resource.package_id})
 
-    duration = datetime.now() - start_time
     log.info(
-        f"Finished toolkit.check_access for package_id ({resource.package_id}) in {duration}"
+        f"Finished [resource_version_create] toolkit.check_access for package_id ({resource.package_id}) in {datetime.now() - start_time}"
     )
 
     creator_user_id = _get_creator_user_id(data_dict, model, context)
 
-    duration = datetime.now() - start_time
-    log.info(f"Finished _get_creator_user_id 2 in {duration}")
+    log.info(
+        f"Finished [resource_version_create] _get_creator_user_id 2 in {datetime.now() - start_time}"
+    )
 
     activity = (
         model.Session.query(Activity)
@@ -210,26 +214,26 @@ def resource_version_create(context, data_dict):
         .first()
     )
 
-    duration = datetime.now() - start_time
     log.info(
-        f"Finished model.Session.query(Activity) for package_id ({resource.package_id}) in {duration}"
+        f"Finished [resource_version_create] model.Session.query(Activity) for package_id ({resource.package_id}) in {datetime.now() - start_time}"
     )
 
     if not activity:
-        duration = datetime.now() - start_time
-        log.info(f"Activity NOT FOUND! in {duration}")
+        log.info(
+            f"Activity NOT FOUND! [resource_version_create] in {datetime.now() - start_time}"
+        )
         raise toolkit.ObjectNotFound("Activity not found")
 
     if not resource_in_activity(
         context, {"activity_id": activity.id, "resource_id": resource_id}
     ):
-        duration = datetime.now() - start_time
-        log.info(f"NOT resource_in_activity! in {duration}")
+        log.info(
+            f"NOT resource_in_activity! [resource_version_create] in {datetime.now() - start_time}"
+        )
         raise toolkit.ObjectNotFound("Resource not found in the activity.")
 
-    duration = datetime.now() - start_time
     log.info(
-        f"END resource_version_create pkgid ({resource.package_id}) resid ({resource_id}) activityid ({activity.id}) name ({name}) creator_user_id ({creator_user_id}) in {duration}"
+        f"Finished [resource_version_create] resource_version_create pkgid ({resource.package_id}) resid ({resource_id}) activityid ({activity.id}) name ({name}) creator_user_id ({creator_user_id}) in {datetime.now() - start_time}"
     )
 
     version = Version(
@@ -542,14 +546,26 @@ def resource_view_list(up_func, context, data_dict):
     Note: This will override the default order field for all the
     versions_view since it will force them to be displayed at the end.
     """
+    start_time = datetime.now()
+    log.info(f"Starting [resource_view_list] resource_view_list. {start_time}")
+
     resource_views = up_func(context, data_dict)
+    log.info(
+        f"Finished [resource_view_list] resource_views = up_func() in {datetime.now() - start_time}"
+    )
 
     versions_views = []
     for i, view in enumerate(resource_views):
         if view["view_type"] == "versions_view":
             versions_views.append(resource_views.pop(i))
 
+    log.info(
+        f"Finished [resource_view_list] view in enumerate(resource_views) loop in {datetime.now() - start_time}"
+    )
     resource_views.extend(versions_views)
+    log.info(
+        f"Finished [resource_view_list] view in resource_views.extend(versions_views) loop in {datetime.now() - start_time}"
+    )
 
     return resource_views
 
