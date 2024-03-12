@@ -167,7 +167,8 @@ def resource_version_create(context, data_dict):
     :rtype: dictionary
     """
     start_time = datetime.now()
-    log.info("Starting resource_version_create.")
+
+    log.info("Starting resource_version_create. ({start_time})")
     model = context.get("model", core_model)
 
     duration = datetime.datetime.now() - start_time
@@ -200,7 +201,7 @@ def resource_version_create(context, data_dict):
     creator_user_id = _get_creator_user_id(data_dict, model, context)
 
     duration = datetime.datetime.now() - start_time
-    log.info(f"Finished _get_creator_user_id in {duration}")
+    log.info(f"Finished _get_creator_user_id 2 in {duration}")
 
     activity = (
         model.Session.query(Activity)
