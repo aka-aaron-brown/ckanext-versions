@@ -171,36 +171,36 @@ def resource_version_create(context, data_dict):
     log.info("Starting resource_version_create. ({start_time})")
     model = context.get("model", core_model)
 
-    duration = datetime.datetime.now() - start_time
+    duration = datetime.now() - start_time
     log.info(f"Finished context.get(model) in {duration}")
 
     resource_id, name = toolkit.get_or_bust(data_dict, ["resource_id", "name"])
 
-    duration = datetime.datetime.now() - start_time
+    duration = datetime.now() - start_time
     log.info(f"Finished toolkit.get_or_bust in {duration}")
 
     resource = model.Resource.get(resource_id)
 
-    duration = datetime.datetime.now() - start_time
+    duration = datetime.now() - start_time
     log.info(
         f"Finished model.Resource.get(resource_id) for ({resource_id}) in {duration}"
     )
 
     if not resource:
-        duration = datetime.datetime.now() - start_time
+        duration = datetime.now() - start_time
         log.info(f"Resource NOT FOUND! in {duration}")
         raise toolkit.ObjectNotFound("Resource not found")
 
     toolkit.check_access("version_create", context, {"package_id": resource.package_id})
 
-    duration = datetime.datetime.now() - start_time
+    duration = datetime.now() - start_time
     log.info(
         f"Finished toolkit.check_access for package_id ({resource.package_id}) in {duration}"
     )
 
     creator_user_id = _get_creator_user_id(data_dict, model, context)
 
-    duration = datetime.datetime.now() - start_time
+    duration = datetime.now() - start_time
     log.info(f"Finished _get_creator_user_id 2 in {duration}")
 
     activity = (
@@ -210,24 +210,24 @@ def resource_version_create(context, data_dict):
         .first()
     )
 
-    duration = datetime.datetime.now() - start_time
+    duration = datetime.now() - start_time
     log.info(
         f"Finished model.Session.query(Activity) for package_id ({resource.package_id}) in {duration}"
     )
 
     if not activity:
-        duration = datetime.datetime.now() - start_time
+        duration = datetime.now() - start_time
         log.info(f"Activity NOT FOUND! in {duration}")
         raise toolkit.ObjectNotFound("Activity not found")
 
     if not resource_in_activity(
         context, {"activity_id": activity.id, "resource_id": resource_id}
     ):
-        duration = datetime.datetime.now() - start_time
+        duration = datetime.now() - start_time
         log.info(f"NOT resource_in_activity! in {duration}")
         raise toolkit.ObjectNotFound("Resource not found in the activity.")
 
-    duration = datetime.datetime.now() - start_time
+    duration = datetime.now() - start_time
     log.info(
         f"END resource_version_create pkgid ({resource.package_id}) resid ({resource_id}) activityid ({activity.id}) name ({name}) creator_user_id ({creator_user_id}) in {duration}"
     )
